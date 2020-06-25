@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<title>Tetris</title>
+</head>
+<body>
+		<div id="main-container">
+			<!-- photo by Greg Rosenke -->
+			<div class = "tetris-container"></div>
+			<button type="button" id="start-button" onclick="starting()">START</button>
+		</div>
+	<script type="text/javascript">
+		
+		let parentDiv = document.querySelector(".tetris-container");
+
+		for (let i = 0; i < 20; i++) {
+			let box = document.createElement('div');
+			box.className = "row";
+			parentDiv.append(box);
+			for (let j = 0; j < 10; j++) {
+				let innerBox = document.createElement("div");
+				innerBox.className = "box trnsprnt";
+				box.append(innerBox);
+			}
+		}               
+		
+ 		let r = [
+			[4, 14, 24, 5],
+			[3, 4, 5, 15],
+			[4, 14, 24, 23],
+			[4, 14, 15, 16]
+		];
+
+		let z = [
+			[4, 14, 15, 25],
+			[15, 16, 24, 25],
+			[4, 14, 15, 25],
+			[15, 16, 24, 25]
+		];
+
+		let e = [
+		    [4, 13, 14, 15],
+		    [4, 14, 15, 24],
+		    [13, 14, 15, 24],
+		    [4, 13, 14, 24]
+		];
+
+		let x = [
+		    [4, 5, 14, 15],
+		    [4, 5, 14, 15],
+		    [4, 5, 14, 15],
+		    [4, 5, 14, 15]
+		];
+
+  		let l = [
+		    [4, 14, 24, 34],
+		    [13, 14, 15, 16],
+		    [4, 14, 24, 34],
+		    [13, 14, 15, 16]
+  		];
+
+		let startButton = document.getElementById("start-button");
+		let boxes = Array.from(document.getElementsByClassName("box"));
+		let rows = Array.from(document.getElementsByClassName("row"));          
+		let shapes = [r, z, e, x, l];
+		let first = 0;
+		let nextIndx = 0;
+		let randomIndx = Math.floor(Math.random() * shapes.length);
+		let randomShape = shapes[randomIndx];
+  		let currentShape = randomShape[first];
+  		let interval;
+
+		function starting() {
+ 			addingColor();
+ 			interval = setInterval(movingDown, 500);
+ 		}
+
+  		function addingColor() {
+  			currentShape.forEach(indx => {
+  				boxes[indx].classList.add("grn");
+  				boxes[indx].classList.remove("trnsprnt");
+  			})
+  		}
+
+  		function removingColor() {
+  			currentShape.forEach(indx => {
+  				boxes[indx].classList.add("trnsprnt");
+  				boxes[indx].classList.remove("grn");
+  			})
+  		}
+
+ 		function movingDown() {
+ 			removingColor();
+ 			currentShape = currentShape.map(indx => indx + 10);
+ 			randomShape = randomShape.map(inner => inner.map(indx => indx + 10));
+ 			freezing();
+ 			addingColor();
+ 		}
+
+ 		startButton.addEventListener("keydown", movingSides);
+ 		function movingSides(e) {
+ 			if (e.code == "ArrowRight") {
+ 				movingRigth();
+ 			}
+ 			if (e.code == "ArrowLeft") {
+ 				movingLeft();
+ 			}
+ 			if (e.code == "ArrowDown") {
+ 				interval = setTimeout(movingDown);
+ 			}
+ 			if (e.code == "ArrowUp") {
+ 				rotating();
+ 			}
+ 		}
+
+ 		function movingRigth() {
+ 			removingColor();
+ 			if (currentShape.some(indx => indx % 10 == 9) ||
+ 				currentShape.some(indx => boxes[indx + 1].classList.contains('grn'))) { 
+	 			addingColor();
+	 		} 
+	 		else {
+	 			currentShape = currentShape.map(indx => indx + 1);	 			
+ 				randomShape = randomShape.map(inner => inner.map(indx => indx + 1));
+	 			freezing()
+	 			addingColor();
+	 		}
+	 	}
+
+	 	function movingLeft() {
+ 			removingColor();
+ 			if (currentShape.some(indx => indx % 10 == 0) ||
+ 				currentShape.some(indx => boxes[indx - 1].classList.contains('grn'))) { 
+	 			addingColor();
+	 		} 
+	 		else {
+	 			currentShape = currentShape.map(indx => indx - 1);	 			
+ 				randomShape = randomShape.map(inner => inner.map(indx => indx - 1));
+	 			freezing()
+	 			addingColor();
+	 		}
+	 	}
+
+		function rotating() {
+		 	removingColor();
+		 	checkRotationPlace();
+		 	first++;
+		 	if (first == currentShape.length) {
+		 		first = 0;
+		 	} 
+		 	currentShape = randomShape[first];
+		 	checkRotationPlace();
+		 	freezing();
+		 	addingColor();
+		}
+
+		function checkRotationPlace() {
+ 			if (currentShape.some(indx => indx % 10 == 9) ||
+ 				currentShape.some(indx => boxes[indx + 1].classList.contains('grn'))) {
+  				currentShape = currentShape.map(indx => indx - 1);
+  				randomShape = randomShape.map(inner => inner.map(indx => indx - 1));
+ 				checkRotationPlace();
+ 			}
+ 			if (currentShape.some(indx => indx % 10 == 0) || 
+		 		currentShape.some(indx => boxes[indx - 1].classList.contains('grn'))) {
+ 				currentShape = currentShape.map(indx => indx + 1);
+ 				randomShape = randomShape.map(inner => inner.map(indx => indx + 1)); 
+			 	checkRotationPlace();
+		 	}
+ 		}
+
+ 		function freezing() {
+ 			if (currentShape.some(indx => indx + 10 >= boxes.length) ||
+ 				currentShape.some(indx => boxes[indx + 10].classList.contains('grn'))) {
+ 				addingColor();
+		 		randomIndx = nextIndx;
+		 		nextIndx = Math.floor(Math.random() * shapes.length);
+		 		randomShape = shapes[nextIndx];
+		  		currentShape = randomShape[first];
+		  		filled();
+		  		clearingRow();	
+		  		addingColor(); 		
+ 			}
+ 		}
+
+ 		function clearingRow() {
+		    rows.forEach((row, index) => {
+		    	if (Array.from(row.childNodes).every(childRow => childRow.classList.contains("grn"))) {
+		    		Array.from(row.childNodes).forEach(child => {
+		    			child.classList.remove("grn");
+		    			child.classList.add("trnsprnt");
+			   		})
+		    		let removedRow = rows.splice(index, 1);
+		    		rows = removedRow.concat(rows);
+		    		rows.forEach(row => parentDiv.appendChild(row));
+		    	}
+		    })
+		}
+ 		
+	 	function filled() {
+ 			if (currentShape.some(indx => boxes[indx].classList.contains('grn'))) {
+				location.reload();
+ 			}
+ 		} 
+
+	</script>
+</body>
+</html>
