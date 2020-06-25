@@ -8,7 +8,7 @@ body {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	background-image: url(images/play.jfif);
+	background-image: url(play.jfif);
 	background-position: center center;
 	background-repeat: no-repeat;
 	opacity: 80%;
