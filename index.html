@@ -191,23 +191,24 @@
 		    			child.classList.remove("grn");
 		    			child.classList.add("trnsprnt");
 			   		})
-		    		let removedRow = rows.splice(index, 1);
-		    		rows.unshift(...removedRow);
+		    		rows.splice(index, 1);
 		    		let removedDomRow = parentDiv.childNodes[index];
 		    		parentDiv.removeChild(removedDomRow);
-		    		let newBox = document.createElement("div");
-		    		newBox.className = "row";
-		    		parentDiv.prepend(newBox);
+		    		let nBox = document.createElement("div");
+		    		nBox.className = "row";
+		    		parentDiv.prepend(nBox);
 		    		for(let i = 0; i < 10; i++) {
-		    			let newInnerBox = document.createElement("div");
-		    			newInnerBox.className = "box trnsprnt";
-		    			newBox.append(newInnerBox);
+		    			let nInnerBox = document.createElement("div");
+		    			nInnerBox.className = "box trnsprnt";
+		    			nBox.append(nInnerBox);
 		    		}	
-		    		//console.log(rows)
+		    		let removedAdded = parentDiv.childNodes[0];
+		    		rows.unshift(removedAdded);
+		    		boxes = Array.from(document.querySelectorAll(".box"));		
 		    	}
 		    })
 		}
- 		
+
 	 	function filled() {
  			if (currentShape.some(indx => boxes[indx].classList.contains('grn'))) {
 				location.reload();
