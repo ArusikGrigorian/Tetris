@@ -183,7 +183,7 @@
 		  		addingColor(); 		
  			}
  		}
-
+	
  		function clearingRow() {
 		    rows.forEach((row, index) => {
 		    	if (Array.from(row.childNodes).every(childRow => childRow.classList.contains("grn"))) {
@@ -192,8 +192,18 @@
 		    			child.classList.add("trnsprnt");
 			   		})
 		    		let removedRow = rows.splice(index, 1);
-		    		rows = removedRow.concat(rows);
-		    		rows.forEach(row => parentDiv.appendChild(row));
+		    		rows.unshift(...removedRow);
+		    		let removedDomRow = parentDiv.childNodes[index];
+		    		parentDiv.removeChild(removedDomRow);
+		    		let newBox = document.createElement("div");
+		    		newBox.className = "row";
+		    		parentDiv.prepend(newBox);
+		    		for(let i = 0; i < 10; i++) {
+		    			let newInnerBox = document.createElement("div");
+		    			newInnerBox.className = "box trnsprnt";
+		    			newBox.append(newInnerBox);
+		    		}	
+		    		//console.log(rows)
 		    	}
 		    })
 		}
