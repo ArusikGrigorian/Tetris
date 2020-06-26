@@ -61,8 +61,8 @@
   		];
 
 		let startButton = document.getElementById("start-button");
-		let boxes = Array.from(document.getElementsByClassName("box"));
-		let rows = Array.from(document.getElementsByClassName("row"));          
+		let boxes = Array.from(document.querySelectorAll(".box"));
+		let rows = Array.from(document.querySelectorAll(".row"));           
 		let shapes = [r, z, e, x, l];
 		let first = 0;
 		let nextIndx = 0;
